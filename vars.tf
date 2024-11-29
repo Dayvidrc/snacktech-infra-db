@@ -19,9 +19,9 @@ variable "policyArn" {
 }
 
 variable "subnet01" {
-   default = "subnet-0e157e4ef24d4a10c" # example: subnet-abcdef1
+   default = "<colocar subnetid 1 aqui>" # example: subnet-abcdef1
  }
  
  variable "subnet02" {
-   default = "subnet-036d0165d35dc633e" # example: subnet-abcdef1
+   default = "colocar subnetid 2 aqui" # example: subnet-abcdef1
  }
