@@ -29,11 +29,12 @@ if (Test-Path $diretorioSql) {
         $SqlFile = $SqlFiles[$i]
         try {
             $serverInstance = "$Instance,$Port"
-            Invoke-Sqlcmd -ServerInstance $serverInstance -Database $DbName -Username $UID -Password $Password -InputFile $SqlFile.FullName -ErrorAction 'Stop'
+            Invoke-Sqlcmd -ServerInstance $serverInstance -Database $DbName -Username $UID -Password $Password -InputFile $SqlFile.FullName -ErrorAction 'Stop' -TrustServerCertificate $true
             $LogMessage = ($SqlFile.Name + " Executed Successfully.")
         }
         catch {
             $LogMessage = "Error executing $($SqlFile.Name): $_"
+            Write-Host "An error occurred: $_"
         }
         $row = [PSCustomObject]@{
             "File" = $SqlFile.Name
