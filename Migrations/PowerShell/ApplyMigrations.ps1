@@ -2,6 +2,8 @@ param (
     [Parameter(Mandatory = $true)]
     [string]$Instance,
     [Parameter(Mandatory = $true)]
+    [int]$Port,
+    [Parameter(Mandatory = $true)]
     [string]$DbName,
     [Parameter(Mandatory = $true)]
     [string]$UID,
@@ -26,7 +28,8 @@ if (Test-Path $diretorioSql) {
     for ($i = 0; $i -lt $SqlFiles.Count; $i++) {
         $SqlFile = $SqlFiles[$i]
         try {
-            Invoke-Sqlcmd -ServerInstance $Instance -Database $DbName -Username $UID -Password $Password -InputFile $SqlFile.FullName -ErrorAction 'Stop'
+            $serverInstance = "$Instance,$Port"
+            Invoke-Sqlcmd -ServerInstance $serverInstance -Database $DbName -Username $UID -Password $Password -InputFile $SqlFile.FullName -ErrorAction 'Stop'
             $LogMessage = ($SqlFile.Name + " Executed Successfully.")
         }
         catch {
