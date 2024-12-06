@@ -14,14 +14,10 @@ variable "regionDefault" {
   default = "us-east-1"
 }
 
-variable "policyArn" {
-  default = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+variable "subnet01" {
+  default = "subnet-0f39f08004a478b4b" # example: subnet-abcdef1
 }
 
-variable "subnet01" {
-   default = "<colocar subnetid 1 aqui>" # example: subnet-abcdef1
- }
- 
- variable "subnet02" {
-   default = "colocar subnetid 2 aqui" # example: subnet-abcdef1
- }
+variable "subnet02" {
+  default = "subnet-060cf976106dda412" # example: subnet-abcdef1
+}
