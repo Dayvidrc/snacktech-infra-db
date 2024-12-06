@@ -6,7 +6,7 @@ param (
     [Parameter(Mandatory = $true)]
     [string]$UID,
     [Parameter(Mandatory = $true)]
-    [SecureString]$Password
+    [string]$Password
 )
 
 # Caminho do diretório onde o script PowerShell está localizado
@@ -20,13 +20,13 @@ if (Test-Path $diretorioSql) {
 
     $logs = @()
     #$ConnectionString = "Server=$Instance;Database=$DbName;User=$UID;Password=$Password;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
-    $plainPassword = [System.Net.NetworkCredential]::new("", $Password).Password
+    #$plainPassword = [System.Net.NetworkCredential]::new("", $Password).Password
     $SqlFiles = Get-ChildItem -Path $diretorioSql -File -Filter *.sql
 
     for ($i = 0; $i -lt $SqlFiles.Count; $i++) {
         $SqlFile = $SqlFiles[$i]
         try {
-            Invoke-Sqlcmd -ServerInstance $Instance -Database $DbName -Username $UID -Password $plainPassword -InputFile $SqlFile.FullName -ErrorAction 'Stop'
+            Invoke-Sqlcmd -ServerInstance $Instance -Database $DbName -Username $UID -Password $Password -InputFile $SqlFile.FullName -ErrorAction 'Stop'
             $LogMessage = ($SqlFile.Name + " Executed Successfully.")
         }
         catch {
