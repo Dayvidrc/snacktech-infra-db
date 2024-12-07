@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-      runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
     env:
       AWS_REGION: us-east-1
@@ -62,7 +62,7 @@ jobs:
           console.log(`::set-env name=DB_INSTANCE::${outputs.db_instance}`);
           console.log(`::set-env name=DB_PORT::${outputs.db_port}`);
 
-migrations:
+  migrations:
     needs: deploy
     runs-on: ubuntu-latest
 
