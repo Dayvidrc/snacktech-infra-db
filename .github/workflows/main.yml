@@ -7,12 +7,77 @@ on:
 
 jobs:
   deploy:
-    runs-on: windows-2022
+      runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: us-east-1
+      CLUSTER_NAME: snack-tech
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+    # 1. Checkout do código
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Execute PowerShell Script
+    # 2. Configurar o AWS CLI
+    - name: Configure AWS CLI
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    # 3. Configurar o Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.7 # Ajuste para a versão do Terraform utilizada
+
+    # 4. Inicializar o Terraform
+    - name: Terraform Init
+      run: terraform init -backend-config="bucket=${{ secrets.BACKEND_BUCKET_NAME }}" -backend-config="key=${{ secrets.BACKEND_BUCKET_KEY }}" -backend-config="region=${{ secrets.AWS_REGION }}"
+
+    # 5. Validar o Terraform
+    - name: Terraform Validate
+      run: terraform validate
+
+    # 6. Gerar o plano do Terraform
+    - name: Terraform Plan
+      run: terraform plan -out=tfplan -var="${{ secrets.AWS_REGION }}" -var="dbPassword=${{ secrets.DB_PASSWORD }}" -var="dbUserName=${{ secrets.DB_UID }}"
+
+    # 7. Aplicar o plano do Terraform
+    - name: Terraform Apply
+      run: terraform apply -auto-approve tfplan 
+
+    # 8. Extract Terraform Outputs
+    - name: Extract Terraform Outputs
       run: |
-        ./Migrations/PowerShell/ApplyMigrations.ps1 -Instance ${{ secrets.DB_INSTANCE }} -Port ${{ secrets.DB_PORT }} -DbName ${{ secrets.DB_NAME }} -UID ${{ secrets.DB_UID }} -Password ${{ secrets.DB_PASSWORD }}
+        terraform output -json > terraform.outputs.json
+
+    # 9. Parse Terraform Outputs
+    - name: Parse Terraform Outputs
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const outputs = require('./terraform.outputs.json');
+          console.log(`::set-env name=DB_INSTANCE::${outputs.db_instance}`);
+          console.log(`::set-env name=DB_PORT::${outputs.db_port}`);
+
+migrations:
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install PowerShell Core
+        run: |
+          sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0
+
+      - name: Check for Database Existence and Create if Necessary
+        run: |
+          dotnet powershell -File ./Migrations/PowerShell/CheckAndCreateDatabase.ps1 -DbName ${{ secrets.DB_NAME }} -UID ${{ secrets.DB_UID }} -Password ${{ secrets.DB_PASSWORD }}
+
+      - name: Execute PowerShell Script
+        run: |
+          dotnet powershell -File ./Migrations/PowerShell/ApplyMigrations.ps1 -Instance ${{ env.DB_INSTANCE }} -Port ${{ env.DB_PORT }} -DbName ${{ secrets.DB_NAME }} -UID ${{ secrets.DB_UID }} -Password ${{ secrets.DB_PASSWORD }}
