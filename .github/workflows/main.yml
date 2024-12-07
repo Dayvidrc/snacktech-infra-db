@@ -43,7 +43,7 @@ jobs:
 
     # 6. Gerar o plano do Terraform
     - name: Terraform Plan
-      run: terraform plan -out=tfplan -var="${{ secrets.AWS_REGION }}" -var="dbPassword=${{ secrets.DB_PASSWORD }}" -var="dbUserName=${{ secrets.DB_UID }}"
+      run: terraform plan -out=tfplan -var="regionDefault=${{ secrets.AWS_REGION }}" -var="dbPassword=${{ secrets.DB_PASSWORD }}" -var="dbUserName=${{ secrets.DB_UID }}"
 
     # 7. Aplicar o plano do Terraform
     - name: Terraform Apply
