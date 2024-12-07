@@ -20,7 +20,7 @@ resource "aws_db_instance" "snacktech_db_instance" {
   # Enable automated backups
   skip_final_snapshot = true
   deletion_protection = false #Em produção mudar aqui para true
-
+  
   # Enable enhanced monitoring - Não fnciona para role LabBuilder
   #monitoring_interval = 60 # Interval in seconds (minimum 60 seconds)
   #monitoring_role_arn = data.aws_iam_role.labrole.arn
@@ -30,7 +30,7 @@ resource "aws_db_instance" "snacktech_db_instance" {
 }
 
 output "db_instance" {
-  value = aws_db_instance.snacktech_db_instance.address
+  value = "${aws_db_instance.snacktech_db_instance.address}"
 }
 
 output "db_port" {
