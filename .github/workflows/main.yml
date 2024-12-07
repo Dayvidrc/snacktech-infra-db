@@ -52,18 +52,18 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan 
 
-  # 8. Extract Terraform Outputs and Set Environment Variables
-  - name: Extract and Set Terraform Outputs
-    run: |
-      terraform output -json > terraform.outputs.json
-      cat terraform.outputs.json
-      
-      # Parse the JSON output and set environment variables
-      DB_INSTANCE=$(jq -r '.db_instance' terraform.outputs.json)
-      DB_PORT=$(jq -r '.db_port' terraform.outputs.json)
+    # 8. Extract Terraform Outputs and Set Environment Variables
+    - name: Extract and Set Terraform Outputs
+      run: |
+        terraform output -json > terraform.outputs.json
+        cat terraform.outputs.json
+        
+        # Parse the JSON output and set environment variables
+        DB_INSTANCE=$(jq -r '.db_instance' terraform.outputs.json)
+        DB_PORT=$(jq -r '.db_port' terraform.outputs.json)
 
-      echo "::set-env name=DB_INSTANCE::$DB_INSTANCE"
-      echo "::set-env name=DB_PORT::$DB_PORT"
+        echo "::set-env name=DB_INSTANCE::$DB_INSTANCE"
+        echo "::set-env name=DB_PORT::$DB_PORT"
 
   migrations:
     needs: deploy
