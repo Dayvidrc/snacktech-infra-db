@@ -1,7 +1,3 @@
 terraform {
-  backend "s3" {
-    bucket = "snack-tech-backend-tf"
-    key    = "rds-backend/terraform.tfstate"
-    region = "us-east-1"
-  }
+  backend "s3" {} #os parametros do backend devem ser fornecidos no comando terraform init
 }
