@@ -57,12 +57,22 @@ jobs:
       run: |
         terraform output -json > terraform.outputs.json
 
-    # 9. Parse Terraform Outputs
+        # 9. Parse Terraform Outputs
     - name: Parse Terraform Outputs
       uses: actions/github-script@v6
       with:
         script: |
-          const outputs = require('${{ env.WORKING_DIR }}/terraform.outputs.json');
+          const fs = require('fs');
+          const path = require('path');
+
+          const filePath = path.join(process.env.WORKING_DIR, 'terraform.outputs.json');
+          const data = fs.readFileSync(filePath, 'utf8');
+
+          // Print the raw JSON content
+          console.log('Terraform Outputs JSON:', data);
+
+          const outputs = JSON.parse(data);
+
           console.log(`::set-env name=DB_INSTANCE::${outputs.db_instance}`);
           console.log(`::set-env name=DB_PORT::${outputs.db_port}`);
 
