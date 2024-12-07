@@ -8,12 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    env:
-      AWS_REGION: us-east-1
-      CLUSTER_NAME: snack-tech
-      WORKING_DIR: ./RDS-terraform
-
+    
     defaults:
       run:
         working-directory: ./RDS-terraform
@@ -64,7 +59,7 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          const outputs = require('${{ env.WORKING_DIR }}/terraform.outputs.json');
+          const outputs = require('terraform.outputs.json');
           console.log(`::set-env name=DB_INSTANCE::${outputs.db_instance}`);
           console.log(`::set-env name=DB_PORT::${outputs.db_port}`);
 
