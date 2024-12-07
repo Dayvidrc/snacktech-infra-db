@@ -76,7 +76,7 @@ migrations:
 
       - name: Check for Database Existence and Create if Necessary
         run: |
-          dotnet powershell -File ./Migrations/PowerShell/CheckAndCreateDatabase.ps1 -DbName ${{ secrets.DB_NAME }} -UID ${{ secrets.DB_UID }} -Password ${{ secrets.DB_PASSWORD }}
+          dotnet powershell -File ./Migrations/PowerShell/CheckAndCreateDatabase.ps1 -Instance ${{ env.DB_INSTANCE }} -Port ${{ env.DB_PORT }} -DbName ${{ secrets.DB_NAME }} -UID ${{ secrets.DB_UID }} -Password ${{ secrets.DB_PASSWORD }}
 
       - name: Execute PowerShell Script
         run: |
