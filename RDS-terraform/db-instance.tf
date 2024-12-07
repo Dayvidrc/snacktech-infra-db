@@ -1,4 +1,4 @@
-resource "aws_db_instance" "development_instance" {
+resource "aws_db_instance" "snacktech_db_instance" {
   allocated_storage         = 20
   storage_type              = "gp2"
   engine                    = "sqlserver-ex"
@@ -27,4 +27,12 @@ resource "aws_db_instance" "development_instance" {
 
   # Enable performance insights
   #performance_insights_enabled = true
+}
+
+output "db_instance" {
+  value = aws_db_instance.snacktech_db_instance.address
+}
+
+output "db_port" {
+  value = aws_db_instance.snacktech_db_instance.port
 }
