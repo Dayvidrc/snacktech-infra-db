@@ -6,7 +6,7 @@ resource "aws_db_instance" "snacktech_db_instance" {
   instance_class            = "db.t3.small"
   identifier                = "${var.projectName}-db"
   username                  = var.dbUserName
-  password                  = var.dbPassword
+  password                  = sensitive(var.dbPassword)
   db_subnet_group_name      = aws_db_subnet_group.snack_tech_db_subnet_group.name
   vpc_security_group_ids    = [aws_security_group.rds_sg.id]
   publicly_accessible       = true
