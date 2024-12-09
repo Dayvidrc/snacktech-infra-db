@@ -7,12 +7,44 @@ on:
 
 jobs:
   deploy:
-    runs-on: windows-2022
+    runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./src
+    
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+    # 1. Checkout do código
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Execute PowerShell Script
-      run: |
-        ./Migrations/PowerShell/ApplyMigrations.ps1 -Instance ${{ secrets.DB_INSTANCE }} -Port ${{ secrets.DB_PORT }} -DbName ${{ secrets.DB_NAME }} -UID ${{ secrets.DB_UID }} -Password ${{ secrets.DB_PASSWORD }}
+    # 2. Configurar o AWS CLI
+    - name: Configure AWS CLI
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ secrets.AWS_SECRET_ACCESS_TOKEN }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    # 3. Configurar o Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.7 # Ajuste para a versão do Terraform utilizada
+
+    # 4. Inicializar o Terraform
+    - name: Terraform Init
+      run: terraform init -backend-config="bucket=${{ secrets.BACKEND_BUCKET_NAME }}" -backend-config="key=${{ secrets.BACKEND_BUCKET_KEY }}" -backend-config="region=${{ secrets.AWS_REGION }}"
+
+    # 5. Validar o Terraform
+    - name: Terraform Validate
+      run: terraform validate
+
+    # 6. Gerar o plano do Terraform
+    - name: Terraform Plan
+      run: terraform plan -out=tfplan -var="regionDefault=${{ secrets.AWS_REGION }}" -var="dbPassword=${{ secrets.DB_PASSWORD }}" -var="dbUserName=${{ secrets.DB_UID }}"
+
+    # 7. Aplicar o plano do Terraform
+    - name: Terraform Apply
+      run: terraform apply -auto-approve tfplan 
