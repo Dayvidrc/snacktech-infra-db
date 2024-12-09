@@ -30,7 +30,8 @@ resource "aws_db_instance" "snacktech_db_instance" {
 }
 
 output "db_instance" {
-  value = "${aws_db_instance.snacktech_db_instance.address}"
+  value = aws_db_instance.snacktech_db_instance.address
+  sensitive = true
 }
 
 output "db_port" {
