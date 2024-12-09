@@ -9,12 +9,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-      WORKING_DIR: ./RDS-terraform
-
     defaults:
       run:
-        working-directory: ./RDS-terraform
+        working-directory: ./src
     
     steps:
     # 1. Checkout do código
@@ -51,36 +48,3 @@ jobs:
     # 7. Aplicar o plano do Terraform
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan 
-
-    # 8. Extract Terraform Outputs and Set Environment Variables
-    - name: Extract and Set Terraform Outputs
-      run: |
-        terraform output -json > terraform.outputs.json
-        cat terraform.outputs.json
-        
-        # Parse the JSON output and set environment variables
-        DB_INSTANCE=$(jq -r '.db_instance' terraform.outputs.json)
-        DB_PORT=$(jq -r '.db_port' terraform.outputs.json)
-
-        echo "::set-env name=DB_INSTANCE::$DB_INSTANCE"
-        echo "::set-env name=DB_PORT::$DB_PORT"
-
-  migrations:
-    needs: deploy
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install PowerShell Core
-        run: |
-          sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0
-
-      - name: Check for Database Existence and Create if Necessary
-        run: |
-          dotnet powershell -File ./Migrations/PowerShell/CheckAndCreateDatabase.ps1 -Instance ${{ env.DB_INSTANCE }} -Port ${{ env.DB_PORT }} -DbName ${{ secrets.DB_NAME }} -UID ${{ secrets.DB_UID }} -Password ${{ secrets.DB_PASSWORD }}
-
-      - name: Execute PowerShell Script
-        run: |
-          dotnet powershell -File ./Migrations/PowerShell/ApplyMigrations.ps1 -Instance ${{ env.DB_INSTANCE }} -Port ${{ env.DB_PORT }} -DbName ${{ secrets.DB_NAME }} -UID ${{ secrets.DB_UID }} -Password ${{ secrets.DB_PASSWORD }}

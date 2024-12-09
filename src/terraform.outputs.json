@@ -1,0 +1,12 @@
+{
+  "db_instance": {
+    "sensitive": false,
+    "type": "string",
+    "value": "snack-tech-db.cdqaeixpjpbv.us-east-1.rds.amazonaws.com"
+  },
+  "db_port": {
+    "sensitive": false,
+    "type": "number",
+    "value": 1433
+  }
+}
