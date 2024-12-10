@@ -20,10 +20,10 @@ jobs:
 
     - name: Install SonarScanner
       run: |
-        # Baixa e instala o SonarScanner CLI
         curl -sS https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip -o sonar-scanner.zip
         unzip sonar-scanner.zip -d /opt
         export PATH=$PATH:/opt/sonar-scanner-4.7.0.2747/bin
+        echo $PATH  # Verifique se o caminho foi corretamente configurado
 
     - name: Run SonarScanner
       env:
