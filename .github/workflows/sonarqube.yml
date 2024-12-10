@@ -35,11 +35,6 @@ jobs:
         cd src/
         terraform plan -out=tfplan
 
-    - name: Apply Terraform (optional)
-      run: |
-        cd src/
-        terraform apply -auto-approve tfplan
-
     - name: Run SonarScanner
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
