@@ -1,0 +1,45 @@
+name: terraform-sonar-analysis
+
+on:
+  push:
+    branches: [ "main", "development" ]
+  pull_request:
+    branches: [ "main", "development" ]
+
+jobs:
+  sonar-analysis:
+    name: Analyze snacktech-infra-db (Terraform)
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: '1.5.7'
+
+    - name: Install SonarScanner
+      run: |
+        curl -sS https://install.sonar.scanner/sonar-scanner-cli-linux-4.7.0.2747.zip -o sonar-scanner.zip
+        unzip sonar-scanner.zip -d /opt
+        export PATH=$PATH:/opt/sonar-scanner-4.7.0.2747/bin
+
+    - name: Run SonarScanner
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey="SnackTechTeam_snacktech-infra-db" \
+          -Dsonar.organization="snacktechteam" \
+          -Dsonar.host.url="https://sonarcloud.io" \
+          -Dsonar.login="${{ secrets.SONAR_TOKEN }}" \
+          -Dsonar.sources="."
+
+    - name: Initialize Terraform
+      run: terraform init
+
+    - name: Plan Terraform
+      run: terraform plan -out=tfplan
+
+    - name: Apply Terraform (optional)
+      run: terraform apply -auto-approve tfplan
