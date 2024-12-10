@@ -14,6 +14,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # Listar os arquivos no repositório após o checkout
+    - name: List files in repository
+      run: |
+        echo "Listing files..."
+        ls -R
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: '1.5.7'  # Use a versão desejada do Terraform
+
     - name: Initialize Terraform
       run: |
         cd src/
