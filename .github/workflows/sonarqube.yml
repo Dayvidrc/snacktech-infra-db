@@ -14,33 +14,29 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # Listar os arquivos no repositório após o checkout
-    - name: List files in repository
-      run: |
-        echo "Listing files..."
-        ls -R
-
     - name: Initialize Terraform
       run: |
-        cd snacktech-infra-db/src/
+        cd src/
         terraform init
 
     - name: Plan Terraform
       run: |
-        cd snacktech-infra-db/src/
+        cd src/
         terraform plan -out=tfplan
 
     - name: Apply Terraform (optional)
       run: |
-        cd snacktech-infra-db/src/
+        cd src/
         terraform apply -auto-approve tfplan
 
     - name: Run SonarScanner
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
+        cd src/
         sonar-scanner \
           -Dsonar.projectKey="SnackTechTeam_snacktech-infra-db" \
           -Dsonar.organization="snacktechteam" \
           -Dsonar.host.url="https://sonarcloud.io" \
-          -Dsonar.logi
+          -Dsonar.login="${{ secrets.SONAR_TOKEN }}" \
+          -Dsonar.sources="."
