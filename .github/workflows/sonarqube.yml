@@ -2,9 +2,9 @@ name: terraform-sonar-analysis
 
 on:
   push:
-    branches: [ "main", "development" ]
+    branches: [ "master", "development" ]
   pull_request:
-    branches: [ "main", "development" ]
+    branches: [ "master", "development" ]
 
 jobs:
   sonar-analysis:
@@ -20,7 +20,8 @@ jobs:
 
     - name: Install SonarScanner
       run: |
-        curl -sS https://install.sonar.scanner/sonar-scanner-cli-linux-4.7.0.2747.zip -o sonar-scanner.zip
+        # Baixa e instala o SonarScanner CLI
+        curl -sS https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip -o sonar-scanner.zip
         unzip sonar-scanner.zip -d /opt
         export PATH=$PATH:/opt/sonar-scanner-4.7.0.2747/bin
 
