@@ -120,3 +120,12 @@ Exemplo de conexão:
 
 ```sql
 Server=<RDS_ENDPOINT>,1433;Database=<DB_NAME>;User Id=<USERNAME>;Password=<PASSWORD>;
+
+---
+
+## Equipe
+
+* Adriano de Melo Costa. Email: adriano.dmcosta@gmail.com
+* Rafael Duarte Gervásio da Silva. Email: rafael.dgs.1993@gmail.com
+* Guilherme Felipe de Souza. Email: gui240799@outlook.com
+* Dayvid Ribeiro Correia. Email: dayvidrc@gmail.com
