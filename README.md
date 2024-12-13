@@ -120,7 +120,7 @@ Exemplo de conexão:
 
 ```sql
 Server=<RDS_ENDPOINT>,1433;Database=<DB_NAME>;User Id=<USERNAME>;Password=<PASSWORD>;
-
+```
 ---
 
 ## Equipe
